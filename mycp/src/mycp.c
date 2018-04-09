@@ -6,20 +6,36 @@
 #include <dirent.h>
 
 int main(int argc, char **argv) {
-    if(argc != 3) {
-        fprintf(stderr, "Usage: %s <source> <destination>\n", argv[0]);
+    if(argc < 3) {
+        fprintf(stderr, "Usage: %s [-r|-R] <source> <destination>\n", argv[0]);
         exit(1);
     }
     struct stat s_stat; //Stat struct for source
     struct stat d_stat; //Stat struct for desitnation
+    int RECUR_CP = 0;
+    int opt, argsind = 1;
 
-    //TODO: Add -r/-R option for recursive copying
-    if(stat(argv[1], &s_stat) == -1) {
+    while((opt = getopt(argc, argv, "rR")) != -1) {
+        switch(opt) {
+            case 'R':
+            case 'r':
+                RECUR_CP = 1;
+                break;
+            default:
+                break;
+        }
+    }
+    argsind = optind;
+
+    if(RECUR_CP) {
+        printf("Directories will be copied recursively.\n");
+    }
+    if(stat(argv[argsind], &s_stat) == -1) {
         perror("Can't stat source.\n");
         exit(1);
     }
-    if(stat(argv[2], &d_stat) == -1) {
-        perror("Can't stat destination.\n");
+    if(stat(argv[argsind + 1], &d_stat) == -1) {
+        perror("Can't stat destination.\n"); //Program will fail if not given destination
         exit(1);
     }
     
