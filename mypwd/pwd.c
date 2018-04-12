@@ -4,7 +4,7 @@
 #include <limits.h>
 #include <unistd.h>
 
-void pwd()
+void mypwd()
 {
   char path[PATH_MAX];
   if(getcwd(path, sizeof(path)) == NULL)
@@ -16,7 +16,7 @@ void pwd()
 
 int main()
 {
-  pwd();  
+  mypwd();  
 
   return 0;        
 }
