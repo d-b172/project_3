@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
         printf("mysh> ");
         fflush(stdin);
         while(n = getchar() != '\n') {
-
+            
         }
     }
 }

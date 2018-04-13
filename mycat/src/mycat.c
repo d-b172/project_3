@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
  //for-loop for iterating through i amount of
  //files since cat can handle more than one file
- for(i = 1; i <= argc; i++)
+ for(i = 1; i < argc; i++)
  {
     //for each file, strncpy to file_name
     strncpy(file_name, argv[i], MAX_FILE_NAME_CHARS);
