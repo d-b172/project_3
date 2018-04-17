@@ -7,7 +7,7 @@
 void mypwd()
 {
   char path[PATH_MAX];
-  if(getcwd(path, sizeof(path)) == NULL)
+  if(getcwd(path, sizeof(char)) == NULL)
     perror("getcwd() error");
   else
     printf("%s\n", path);
