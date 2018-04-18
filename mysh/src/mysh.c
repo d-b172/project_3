@@ -8,7 +8,7 @@ int num_commands;
 void setup_shell() {
     //do some stuff to set up the shell
     //allocate cwd
-    cwd = malloc(sizeof(char)*PATH_MAX);
+    cwd = malloc(sizeof(char) * PATH_MAX);
     if(getcwd(cwd, PATH_MAX) == NULL) {
         perror("Error with getcwd");
     }  
@@ -92,6 +92,82 @@ void tokenize_commands(char *command_string) {
     num_commands = j; //Set the global variable num_commands to the number of commands parsed
 }
 
+void exec_commands() {
+    //Iterate through commands doing redirection and piping as necessary
+    if(num_commands == 1) {
+        if(strcmp(commands[0].tokens[0], "mypwd") == 0) {
+            mypwd();
+            return;
+        }
+        else if(commands[0].tokens[0] == "mycd") {
+            //call mycd and give it the command to execute
+            //mycd(commands[0]);
+        }
+    }
+    //Here we can begin to iterate through commands and set up pipes/execute them
+    int lfd[2], rfd[2];
+    int infd, outfd;
+    int status;
+    int i;
+    pipe(lfd);
+    for(i = 0; i < num_commands; i++) {
+        if(num_commands > 1) {
+            pipe(rfd);
+        }
+        pid_t pid = fork();
+        if(pid == 0) { //Child
+            if(commands[i].redirIn) {
+                infd = open(commands[i].inFile, O_RDONLY);
+                if(infd < 0) {
+                    perror("Error opening infile.");
+                }
+                dup2(infd, STDIN_FD);
+                close(infd);
+            }
+            if(num_commands > 1) {
+                if(i == 0) { //first pipe
+                    dup2(rfd[PIPE_WRITE], STDOUT_FD);
+                    close(rfd[PIPE_READ]);
+                    close(rfd[PIPE_WRITE]);
+                }
+                else if(i == (num_commands - 1 )) { //last pipe
+                    dup2(lfd[PIPE_READ], STDIN_FD);
+                    close(lfd[PIPE_READ]);
+                    close(lfd[PIPE_WRITE]);
+                }
+                else {
+                    dup2(lfd[PIPE_READ], STDIN_FD);
+                    close(lfd[PIPE_READ]);
+                    close(lfd[PIPE_WRITE]);
+                    dup2(rfd[PIPE_WRITE], STDOUT_FD);
+                    close(rfd[PIPE_READ]);
+                    close(rfd[PIPE_WRITE]);
+                }
+            }
+            if(commands[i].redirOut) {
+                outfd = open(commands[i].outFile, O_WRONLY | O_CREAT | O_TRUNC | S_IRUSR | S_IWUSR);
+                if(outfd < 0) {
+                    perror("Error creating/opening outfile");
+                }
+                dup2(outfd, STDOUT_FD);
+                close(outfd);
+            }
+            if(execvp(commands[i].tokens[0], commands[i].tokens) < 0) {
+                fprintf(stderr, "Error execing command %s\n", commands[i].tokens[0]);
+                exit(1);
+            }
+        }
+        else if(pid > 0) {
+            if(i > 0) {
+                close(lfd[PIPE_READ]); //Close unnecessary left pipe
+                close(lfd[PIPE_WRITE]);
+            }
+            lfd[PIPE_READ] = rfd[PIPE_READ]; // Save current right pipe as left pipe
+            lfd[PIPE_WRITE] = rfd[PIPE_WRITE];
+            wait(&status);
+        }
+    }
+}
 
 int main(int argc, char **argv) {
     char in_line[MAX_LN_SZ];
@@ -110,7 +186,7 @@ int main(int argc, char **argv) {
             break;
         }
         tokenize_commands(in_line);
-        printf("Parsed %d simple commands.\n", num_commands);
+        exec_commands();
     }
     free(cwd);
     exit(0);

@@ -12,6 +12,8 @@
 
 #define PIPE_READ 0
 #define PIPE_WRITE 1
+#define STDIN_FD 0
+#define STDOUT_FD 1
 #define MAX_SIZE 256
 #define MAX_LN_SZ 4096
 
