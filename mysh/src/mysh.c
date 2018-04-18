@@ -68,6 +68,7 @@ void tokenize_commands(char *command_string) {
         }
         for(str2 = tok; ; str2 = NULL) {
             if((toktok = strtok_r(str2, " ", &p2)) != NULL) {
+                //This breaks if redirection is put at the very beginning of command
                 if(strcmp(toktok, "<") == 0) { //Found input redirection in curr command
                     commands[j].redirIn = 1; //Set input redirection flag to true
                     toktok = strtok_r(str2, " ", &p2); //Next token should be infile
@@ -145,7 +146,8 @@ void exec_commands() {
                 }
             }
             if(commands[i].redirOut) {
-                outfd = open(commands[i].outFile, O_WRONLY | O_CREAT | O_TRUNC | S_IRUSR | S_IWUSR);
+                outfd = open(commands[i].outFile, O_WRONLY | O_CREAT | O_TRUNC,
+                                                  S_IRUSR | S_IWUSR);
                 if(outfd < 0) {
                     perror("Error creating/opening outfile");
                 }

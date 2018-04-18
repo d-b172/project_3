@@ -1,0 +1,12 @@
+include/mysh.h:    char outFile[MAX_SIZE];
+Binary file obj/mysh.o matches
+Binary file obj/builtin.o matches
+Binary file mysh matches
+src/mysh.c:    /* DEBUG: Write original command_string array and new copy_string to stdout */
+src/mysh.c:                    strncpy(commands[j].outFile, toktok, strlen(toktok));
+src/mysh.c:    int infd, outfd;
+src/mysh.c:                outfd = open(commands[i].outFile, O_WRONLY | O_CREAT | O_TRUNC,
+src/mysh.c:                if(outfd < 0) {
+src/mysh.c:                    perror("Error creating/opening outfile");
+src/mysh.c:                dup2(outfd, STDOUT_FD);
+src/mysh.c:                close(outfd);
