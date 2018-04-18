@@ -14,10 +14,9 @@
 #define PIPE_WRITE 1
 #define MAX_SIZE 256
 #define MAX_LN_SZ 4096
-#define MAX_PATH 4096
 
 struct command {
-    char *simple_command[MAX_SIZE];
+    char *tokens[MAX_SIZE];
     int redirIn;
     int redirOut;
     char inFile[MAX_SIZE];
