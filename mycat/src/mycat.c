@@ -38,12 +38,8 @@ int main(int argc, char *argv[])
     }
 
     printf("\n");
-  
-    printf("HERERERERERERERE\n");
     //close file
     fclose(fp); 
  }
- printf("NOOO\n");
-
 return 0;
 }
