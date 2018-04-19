@@ -63,6 +63,8 @@ void tokenize_commands(char *command_string) {
     //and then NULL for every subsequent call
     for(str1 = command_string; ; str1 = NULL) {
         k = 0;
+        commands[j].redirIn = 0;
+        commands[j].redirOut = 0;
         if((tok = strtok_r(str1, "|", &p1)) == NULL) {
             break;
         }
@@ -131,7 +133,7 @@ void exec_commands() {
                     close(rfd[PIPE_READ]);
                     close(rfd[PIPE_WRITE]);
                 }
-                else if(i == (num_commands - 1 )) { //last pipe
+                else if(i == (num_commands - 1)) { //last pipe
                     dup2(lfd[PIPE_READ], STDIN_FD);
                     close(lfd[PIPE_READ]);
                     close(lfd[PIPE_WRITE]);
