@@ -19,6 +19,7 @@ char permissions[11];
 char timebuf[50];
 int numLinks;
 int size;
+int comp (const void *, const void * ); 
 
 int main(int argc, char **argv) {
     int opt, argsind = 1;
@@ -91,10 +92,12 @@ int main(int argc, char **argv) {
                 char g[50];
                 strncpy(g, grp->gr_name, 49);
                 g[49] = '\0';
+                qsort (in_args, j, sizeof(char*), comp);
                 printf("%s %d %s %s %d %s %s\n", permissions, numLinks, u, g, size, timebuf, in_args[i]);
             }
         }
         else{
+            qsort (in_args, j, sizeof(char*), comp);
             for(i = 0; i < j; i++) {
                 printf("%s ", in_args[i]);
             }
@@ -102,4 +105,15 @@ int main(int argc, char **argv) {
         }
     }
     
+}
+
+
+
+int comp (const void * elem1, const void * elem2) 
+{
+    char f = *((char*)elem1);
+    char s = *((char*)elem2);
+    if (f < s) return  1;
+    if (f > s) return -1;
+    return 0;
 }
