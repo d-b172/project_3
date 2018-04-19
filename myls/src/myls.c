@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
+#include <time.h>
 
 #define MAX_SIZE 256
 
@@ -15,7 +16,7 @@ int ARG_FLAG = 0;
 char *in_args[MAX_SIZE];
 struct stat buf;
 char permissions[11];
-char time[50];
+char timebuf[50];
 int numLinks;
 int size;
 
@@ -65,22 +66,22 @@ int main(int argc, char **argv) {
         if(L_FLAG){
             for(i = 0; i < j; i++){
                 stat(in_args[i],&buf);
-                permissions[0] = (S_ISDIR(buf.st_mode) ? "d" : "-");
-                permissions[1] = (buf.st_mode & S_IRUSR) ? "r" : "-";
-                permissions[2] = (buf.st_mode & S_IWUSR) ? "w" : "-";
-                permissions[3] = (buf.st_mode & S_IXUSR) ? "x" : "-";
-                permissions[4] = (buf.st_mode & S_IRGRP) ? "r" : "-";
-                permissions[5] = (buf.st_mode & S_IWUSR) ? "w" : "-";
-                permissions[6] = (buf.st_mode & S_IXUSR) ? "x" : "-";
-                permissions[7] = (buf.st_mode & S_IROTH) ? "r" : "-";
-                permissions[8] = (buf.st_mode & S_IWOTH) ? "w" : "-";
-                permissions[9] = (buf.st_mode & S_IXOTH) ? "x" : "-";
+                permissions[0] = (S_ISDIR(buf.st_mode) ? 'd' : '-');
+                permissions[1] = (buf.st_mode & S_IRUSR) ? 'r' : '-';
+                permissions[2] = (buf.st_mode & S_IWUSR) ? 'w' : '-';
+                permissions[3] = (buf.st_mode & S_IXUSR) ? 'x' : '-';
+                permissions[4] = (buf.st_mode & S_IRGRP) ? 'r' : '-';
+                permissions[5] = (buf.st_mode & S_IWUSR) ? 'w' : '-';
+                permissions[6] = (buf.st_mode & S_IXUSR) ? 'x' : '-';
+                permissions[7] = (buf.st_mode & S_IROTH) ? 'r' : '-';
+                permissions[8] = (buf.st_mode & S_IWOTH) ? 'w' : '-';
+                permissions[9] = (buf.st_mode & S_IXOTH) ? 'x' : '-';
                 permissions[10] = '\0';
                 numLinks = buf.st_nlink;
-                strncpy(time, ctime(&buf.st_atime), 49);
-                time[49] = '\0';
-                int len = strlen(time);
-                if(time[len-1]=='\n') time[len-1] = '\0';
+                strncpy(timebuf, ctime(&buf.st_atime), 49);
+                timebuf[49] = '\0';
+                int len = strlen(timebuf);
+                if(timebuf[len-1]=='\n') timebuf[len-1] = '\0';
                 int size = buf.st_size;
                 struct passwd *user = getpwuid(buf.st_uid);
                 struct group *grp = getgrgid(buf.st_gid);
@@ -93,10 +94,12 @@ int main(int argc, char **argv) {
                 printf("%s %d %s %s %d %s %s\n", permissions, numLinks, u, g, size, time, in_args[i]);
             }
         }
-        for(i = 0; i < j; i++) {
-            printf("%s ", in_args[i]);
+        else{
+            for(i = 0; i < j; i++) {
+                printf("%s ", in_args[i]);
+            }
+            printf("\n");
         }
-        printf("\n");
     }
     
 }
