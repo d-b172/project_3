@@ -4,7 +4,7 @@ OBJDIR = obj
 SRCDIR = src
 CC_FLAGS = -w -pedantic $(INC)
 
-EXEC = mycp
+EXEC = ../bin/mycp
 SOURCES = $(shell find $(SRCDIR) -name '*.c')
 OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))
 
