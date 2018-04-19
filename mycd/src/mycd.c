@@ -1,26 +1,20 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-
 void mycd(char* argv)
 {
+ struct stat buff;
+ stat(argv, &buff);
  if(chdir(argv) == -1)
   {
-    if((S_ISREG(argv) == 0) && (S_ISLNK(argv) == 0))
+    if((S_ISREG(buff.st_mode) != 0) || (S_ISLNK(buff.st_mode) != 0))
     {
-      perror("-bash: cd: ", argv, ": Not a directory\n");
-    } else if(S_ISDIR(argv) == 0)
+      printf("-bash: cd: ");
+      printf("%s", argv);
+      printf(": Not a directory\n");
+    } else if(S_ISDIR(buff.st_mode) == 0)
       {
-         perror("-bash: cd: ", argv, ": No such file or directory\n");
+         printf("-bash: cd: ");
+         printf("%s", argv);
+         printf(": No such file or directory\n");
       }
   }
 
-}
-
-int main(int argc,char* argv[])
-{
-  mycd(argv[1]);
-
-  return 0;
 }
