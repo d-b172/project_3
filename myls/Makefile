@@ -2,7 +2,7 @@ CC = gcc
 INC = -Iinclude
 OBJDIR = obj
 SRCDIR = src
-CC_FLAGS = -w -pedantic $(INC)
+CC_FLAGS = -w -g -pedantic $(INC)
 
 EXEC = myls
 SOURCES = $(shell find $(SRCDIR) -name '*.c')
