@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
                 char g[50];
                 strncpy(g, grp->gr_name, 49);
                 g[49] = '\0';
-                printf("%s %d %s %s %d %s %s\n", permissions, numLinks, u, g, size, time, in_args[i]);
+                printf("%s %d %s %s %d %s %s\n", permissions, numLinks, u, g, size, timebuf, in_args[i]);
             }
         }
         else{
