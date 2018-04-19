@@ -8,6 +8,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+#include <limits.h>
 
 #define MAX_SIZE 256
 
@@ -22,6 +23,7 @@ char timebuf[50];
 int numLinks;
 int size;
 int comp (const void *, const void * ); 
+void stat_ls_dir(char*);
 
 int main(int argc, char **argv) {
     int opt, argsind = 1;
@@ -96,6 +98,7 @@ int main(int argc, char **argv) {
         }
         printf("\n");
         if(DIR_FLAG){
+            qsort (dirs, dir_count, sizeof(char*), comp);
             for(i = 0; i < dir_count; i++){
                 printf("\n%s: \n", dirs[i]);
                 stat_ls_dir(dirs[i]);
@@ -163,6 +166,9 @@ int main(int argc, char **argv) {
 
 void stat_ls_dir(char* dirs){
     DIR *dir = opendir(dirs);
+    char *cur = getcwd(NULL, 0);
+    chdir(dirs);
+
     struct dirent *dp;
         char *file_name;
         int j = 0;
@@ -179,7 +185,9 @@ void stat_ls_dir(char* dirs){
         qsort (in_args, j, sizeof(char*), comp);
         if(L_FLAG){
             for(i = 0; i < j; i++){
-                stat(in_args[i],&buf);
+                if(stat(in_args[i],&buf) < 0){
+                    printf("NOOOOOOOOOOOOOOOO\n");
+                }
                 permissions[0] = (S_ISDIR(buf.st_mode) ? 'd' : '-');
                 permissions[1] = (buf.st_mode & S_IRUSR) ? 'r' : '-';
                 permissions[2] = (buf.st_mode & S_IWUSR) ? 'w' : '-';
@@ -215,6 +223,7 @@ void stat_ls_dir(char* dirs){
             }
             printf("\n");
         }
+        chdir(cur);
 }
 
 int comp (const void * elem1, const void * elem2) 
